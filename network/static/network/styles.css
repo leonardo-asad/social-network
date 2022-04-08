@@ -1,13 +1,18 @@
-#post {
+.post {
   margin: 20px;
   padding: 20px 10px;
   border: solid 1px;
 }
 
-#post-author {
+.post-author {
   font-size: 20px;
 }
 
-#post-timestamp {
+.post-timestamp {
   color: grey;
+}
+
+.likes-container {
+  display:flex;
+  gap: 5px;
 }

@@ -114,3 +114,11 @@ def like_toogle(request, post_id):
     }
 
     return JsonResponse(data, status=200)
+
+def profile(request, username):
+
+    user = User.objects.get(username=username)
+
+    return render(request, "network/profile.html", {
+        'user': user
+    })

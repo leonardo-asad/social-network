@@ -18,7 +18,9 @@
     {% for post in posts %}
 
     <div class="post">
-      <b class="post-author">{{ post.author.username }}</b>
+      <a href="{% url 'network:profile' post.author.username %}">
+        <b class="post-author">{{ post.author.username }}</b>
+      </a>
       <div class="post-content">{{ post.content }}</div>
       <div class="post-timestamp">{{ post.timestamp }}</div>
       <div class="likes-container">

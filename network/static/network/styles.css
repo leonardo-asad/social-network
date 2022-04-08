@@ -16,3 +16,11 @@
   display:flex;
   gap: 5px;
 }
+
+.follow-container {
+  display:flex !important;
+  gap: 40px !important;
+  font-family: sans-serif;
+  font-size: 15px;
+
+}

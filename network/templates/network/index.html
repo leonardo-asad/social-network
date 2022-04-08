@@ -1,0 +1,13 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    {% for post in posts %}
+
+      <div id="post">
+        <b id="post-author">{{ post.author.username }}</b>
+        <div id="post-content">{{ post.content }}</div>
+        <div id="post-timestamp">{{ post.timestamp }}</div>
+      </div>
+
+    {% endfor %}
+{% endblock %}

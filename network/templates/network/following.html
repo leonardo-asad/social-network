@@ -1,4 +1,5 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 
@@ -32,4 +33,8 @@
 
 {% endfor %}
 
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/following.js' %}"></script>
 {% endblock %}

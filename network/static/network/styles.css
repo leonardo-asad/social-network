@@ -5,6 +5,14 @@
   border-radius: 5px;
 }
 
+.edit-post {
+  margin: 20px;
+  padding: 20px 10px;
+  border: solid 1px;
+  border-radius: 5px;
+  display: none;
+}
+
 .post-author {
   font-size: 20px;
 }
@@ -57,4 +65,11 @@
 #create-title {
   font-size: 30px;
   font-family: Georgia;
+}
+
+.center {
+  margin: auto;
+  width: 30%;
+  border: 3px solid green;
+  padding: 10px;
 }

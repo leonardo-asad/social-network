@@ -7,6 +7,8 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 from django.utils import timezone
+from django.core.paginator import Paginator
+from django.views.decorators.csrf import csrf_exempt
 
 from .models import User, Post
 from .forms import PostForm
@@ -15,7 +17,13 @@ from .forms import PostForm
 def index(request):
 
     # Get all posts ordered from the most recent to the oldest
-    posts = Post.objects.all().order_by("-timestamp")
+    posts_all = Post.objects.all().order_by("-timestamp")
+
+    # Use Paginator to paginate the querySet
+    paginator = Paginator(posts_all, 10) # Shows 10 posts per page
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     if request.method == "POST":
         form = PostForm(request.POST)
@@ -32,12 +40,12 @@ def index(request):
 
         else:
             return render(request, "network/index.html", {
-                'posts': posts,
+                'posts': page_obj,
                 'post_form': form
             })
 
     return render(request, "network/index.html", {
-        'posts': posts,
+        'posts': page_obj,
         'post_form': PostForm()
     })
 
@@ -120,11 +128,17 @@ def profile(request, user_id):
 
     user_profile = User.objects.get(pk=user_id)
 
-    posts = Post.objects.filter(author=user_profile).all().order_by("-timestamp")
+    posts_all = Post.objects.filter(author=user_profile).all().order_by("-timestamp")
+
+    # Use Paginator to paginate the querySet
+    paginator = Paginator(posts_all, 10) # Shows 10 posts per page
+
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
 
     return render(request, "network/profile.html", {
         'user_profile': user_profile,
-        'posts': posts
+        'posts': page_obj
     })
 
 @login_required
@@ -158,3 +172,27 @@ def following(request):
     return render(request, "network/following.html", {
         'posts': filtered_posts
     })
+
+@csrf_exempt
+def edit(request, post_id):
+
+    post = Post.objects.get(pk=post_id)
+
+    # If the request is not made by the author of the post, it is denied
+    if not post.author == request.user:
+        return HttpResponse(status=403)
+
+    if request.method == "POST":
+
+        data = json.loads(request.body)
+
+        # Update the content of the post
+        post.content = data.get('content')
+        post.save(update_fields=['content'])
+
+        #breakpoint()
+
+        return HttpResponse(status=200)
+
+
+    return JsonResponse({'post_content': post.content}, status=200)

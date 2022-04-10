@@ -5,7 +5,7 @@
 
     {% if user.is_authenticated %}
       <div class="post">
-        <h4>Create new Post</h4>
+        <b id="create-title">Create new Post</b>
         <form action="{% url 'network:index' %}" method="post">
           {% csrf_token %}
           {{ post_form.as_p }}
@@ -18,7 +18,7 @@
     {% for post in posts %}
 
     <div class="post">
-      <a href="{% url 'network:profile' post.author.username %}">
+      <a href="{% url 'network:profile' post.author.pk %}">
         <b class="post-author">{{ post.author.username }}</b>
       </a>
       <div class="post-content">{{ post.content }}</div>

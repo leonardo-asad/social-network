@@ -1,15 +1,66 @@
 {% extends "network/layout.html" %}
+{% load static %}
 
 {% block body %}
 
-  <div>
-    <h4>{{ user.username }}</h4>
+  <div class="profile">
+    <div class="follow-container">
+      <b class="profile-username">{{ user_profile.username }}</b>
+      {% if user.is_authenticated %}
+        {% if not user_profile == user %}
+          {% if user_profile in user.following.all %}
+            <button type="button" id="follow-button" class="btn btn-primary btn-sm active" data-toggle="button" data-user="{{ user_profile.pk }}" aria-pressed="true" autocomplete="off">
+              Unfollow
+            </button>
+          {% else %}
+            <button type="button" id="follow-button" class="btn btn-primary btn-sm" data-toggle="button" data-user="{{ user_profile.pk }}" aria-pressed="false" autocomplete="off">
+              Follow
+            </button>
+          {% endif %}
+        {% endif %}
+      {% endif %}
+    </div>
+    <div class="follow-container-count">
+      <b>Following: </b><div id="following">{{ user_profile.following.all.count }}</div>
+      <b>Followers: </b><div id="followers">{{ user_profile.followers.all.count }} </div>
+    </div>
+    <div id="separator"></div>
   </div>
-  <div class="follow-container">
-    <div>Following: </div>
-    <div>Followers: </div>
-  </div>
 
 
 
+  {% for post in posts %}
+
+    <div class="post">
+      <a href="{% url 'network:profile' post.author.pk %}">
+        <b class="post-author">{{ post.author.username }}</b>
+      </a>
+      <div class="post-content">{{ post.content }}</div>
+      <div class="post-timestamp">{{ post.timestamp }}</div>
+      <div class="likes-container">
+        {% if user.is_authenticated %}
+          {% if user in post.likes.all %}
+            <svg class="post-like-button" data-href="{{ post.get_like_url }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="red" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
+              <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z"/>
+            </svg>
+          {% else %}
+            <svg class="post-like-button" data-href="{{ post.get_like_url }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
+              <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z"/>
+            </svg>
+          {% endif %}
+        {% else %}
+          <svg class="post-like-button" data-href="{{ post.get_like_url }}" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="grey" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
+            <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z"/>
+          </svg>
+        {% endif %}
+        <div class="post-likes-count" id="{{ post.pk }}">{{ post.likes.count }}</div>
+      </div>
+    </div>
+
+    {% endfor %}
+
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'network/profile.js' %}"></script>
 {% endblock %}

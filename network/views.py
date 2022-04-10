@@ -115,10 +115,46 @@ def like_toogle(request, post_id):
 
     return JsonResponse(data, status=200)
 
-def profile(request, username):
 
-    user = User.objects.get(username=username)
+def profile(request, user_id):
+
+    user_profile = User.objects.get(pk=user_id)
+
+    posts = Post.objects.filter(author=user_profile).all().order_by("-timestamp")
 
     return render(request, "network/profile.html", {
-        'user': user
+        'user_profile': user_profile,
+        'posts': posts
+    })
+
+@login_required
+def follow_toogle(request, user_id):
+
+    user_profile = User.objects.get(pk=user_id)
+
+    if user_profile in request.user.following.all():
+        request.user.following.remove(user_profile)
+        action = "unfollowed"
+    else:
+        request.user.following.add(user_profile)
+        action = "followed"
+
+    data = {
+        'action': action,
+        'following': user_profile.following.all().count(),
+        'followers': user_profile.followers.all().count()
+    }
+    return JsonResponse(data, status=200)
+
+@login_required
+def following(request):
+
+    following_users = request.user.following.all()
+
+    all_posts = Post.objects.all()
+
+    filtered_posts = [post for post in all_posts if post.author in following_users]
+
+    return render(request, "network/following.html", {
+        'posts': filtered_posts
     })
